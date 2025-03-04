@@ -1,19 +1,21 @@
 package com.example.user_service.config;
-
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.io.Decoders;
-import org.springframework.stereotype.Component;
+
 
 import java.util.Date;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import javax.crypto.SecretKey;
 
 @Component
 public class JwtUtil {
-
-    private final String secretKey = "super_secret_super_secret_super_secret_super_secret!"; // Must be at least 32 characters for HS256
+    
+    @Value("${jwt.secret}")
+    private String secretKey;
+    
+    @Value("${jwt.expiration}")
     private final long jwtExpiration = 3600000; // 1 hour
 
     private SecretKey getSigningKey() {
