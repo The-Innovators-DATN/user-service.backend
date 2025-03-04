@@ -1,18 +1,20 @@
 package com.example.user_service;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+
+import java.util.Map;
 
 @SpringBootApplication
 public class UserServiceApplication {
-	
-	// Autowire the Environment object for accessing environment variables
-    @Autowired
-    private Environment env;
-	public static void main(String[] args) {
-		SpringApplication.run(UserServiceApplication.class, args);
-	}
 
+    static {
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+        dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue())); // Load vào System
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(UserServiceApplication.class, args);
+    }
 }

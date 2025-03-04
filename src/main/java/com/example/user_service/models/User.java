@@ -3,10 +3,12 @@ package com.example.user_service.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")  // Đảm bảo đúng tên bảng
+@Table(name = "users")  
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,4 +34,7 @@ public class User {
 
     @Column(nullable = false)
     private String passwordHash;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserSSO> ssoAccounts = new ArrayList<>();
 }
