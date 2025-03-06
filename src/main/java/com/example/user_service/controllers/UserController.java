@@ -3,7 +3,9 @@ package com.example.user_service.controllers;
 import com.example.user_service.config.JwtUtil;
 import com.example.user_service.models.User;
 import com.example.user_service.services.*;
+import com.example.user_service.exceptions.*;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,13 +42,21 @@ public class UserController {
         String email = body.get("email");
         String fullName = body.get("full_name");
         String password = body.get("password");
-    
-        User newUser = authService.registerUser(email, fullName, password);
-        if (newUser.getKongConsumerId() != null) {
-            return ResponseEntity.ok(Map.of("message", "User registered successfully", "user_id", newUser.getId(), "kong_consumer_id", newUser.getKongConsumerId()));
-        } else {
-            return ResponseEntity.status(500).body("User registered, but failed to create Kong consumer.");
+
+        try {
+            User newUser = authService.registerUser(email, fullName, password);
+            return ResponseEntity.ok(Map.of(
+                "message", "User registered successfully",
+                "user_id", newUser.getId(),
+                "kong_consumer_id", newUser.getKongConsumerId()
+            ));
+        } catch (EmailAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                "error", "Email already registered",
+                "message", e.getMessage()
+            ));
         }
     }
+
     
 }

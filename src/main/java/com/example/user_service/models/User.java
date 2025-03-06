@@ -28,7 +28,7 @@ public class User {
     private String fullName;
 
     private Boolean isAdmin;
-
+    private Boolean emailVerified;
     @Column(columnDefinition = "UUID")  // ⚡ Đảm bảo là kiểu UUID
     private UUID kongConsumerId;
 

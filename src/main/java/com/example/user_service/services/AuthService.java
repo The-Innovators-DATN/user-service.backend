@@ -2,6 +2,7 @@ package com.example.user_service.services;
 
 import com.example.user_service.models.User;
 import com.example.user_service.repositories.UserRepository;
+import com.example.user_service.exceptions.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,22 +27,31 @@ public class AuthService {
     }
 
     public User registerUser(String email, String fullName, String rawPassword) {
+        // 🛠 Kiểm tra xem email đã tồn tại chưa
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new EmailAlreadyExistsException("Email đã tồn tại trong hệ thống: " + email);
+        }
+    
+        // ✅ Nếu email chưa tồn tại, tạo user mới
         User user = new User();
         user.setEmail(email);
         user.setFullName(fullName);
         user.setPasswordHash(passwordEncoder.encode(rawPassword));
         user.setKongConsumerId(null);  // ⚡ Ban đầu để null
         user = userRepository.save(user);
-    
+        
         // 🛠 Gọi Kong để lấy consumer_id
         String kongConsumerId = createKongConsumer(user.getId(), email);
         if (kongConsumerId != null) {
-            user.setKongConsumerId(UUID.fromString(kongConsumerId)); // ✅ Convert String -> UUID
+            user.setKongConsumerId(UUID.fromString(kongConsumerId));
             userRepository.save(user);
         }
     
         return user;
-    }    
+    }
+    
+    
+
     private String createKongConsumer(Long userId, String email) {
         String kongAdminUrl = "http://localhost:8001/consumers";  // ⚡ URL Kong Admin API
         String consumerUsername = "user-" + userId;  // Định danh trong Kong
