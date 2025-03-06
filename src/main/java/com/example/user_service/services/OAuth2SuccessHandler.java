@@ -19,6 +19,7 @@ import java.util.Optional;
 
 @Service
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
     private final UserRepository userRepository;
     private final UserSSORepository userSSORepository;
 
@@ -32,10 +33,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
-        String authProvider = "google";  // Nếu muốn support nhiều provider, lấy từ request
+        String authProvider = request.getParameter("provider"); // Lấy provider từ query parameter
         String authId = oAuth2User.getAttribute("sub");
 
-        // 📌 Tìm user trong DB, nếu chưa có thì tạo mới
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> {
                     User newUser = new User();
@@ -44,7 +44,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                     return userRepository.save(newUser);
                 });
 
-        // 📌 Kiểm tra user đã có OAuth2 mapping chưa
         Optional<UserSSO> existingSSO = userSSORepository.findByAuthId(authId);
         if (existingSSO.isEmpty()) {
             UserSSO newSSO = new UserSSO();
@@ -54,7 +53,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             userSSORepository.save(newSSO);
         }
 
-        // 📌 Redirect về frontend với token
         String targetUrl = UriComponentsBuilder.fromUriString("https://your-frontend.com/dashboard")
                 .queryParam("email", email)
                 .build().toUriString();

@@ -14,8 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.user_service.services.OAuth2UserService;
 import com.example.user_service.config.JwtAuthenticationFilter;
-
-
 import com.example.user_service.services.OAuth2SuccessHandler;
 
 @Configuration
@@ -30,7 +28,6 @@ public class SecurityConfig {
         this.oAuth2UserService = oAuth2UserService;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
     }
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -58,11 +55,4 @@ public class SecurityConfig {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
-    // @Bean
-    // public OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
-    //     OidcClientInitiatedLogoutSuccessHandler successHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-    //     successHandler.setPostLogoutRedirectUri("https://your-frontend.com/login");  // 🔥 Redirect user về frontend sau khi logout
-    //     return successHandler;
-    // }
 }

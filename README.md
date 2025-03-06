@@ -1,7 +1,7 @@
 # user_service.backend
 
 
-curl -X POST http://localhost:8000/api/user/auth/register   -H "Content-Type: application/json"   -d '{ "email": "user4@example.com", "full_name": "User Three", "password": "password123" }'
+curl -X POST http://localhost:8000/auth/register   -H "Content-Type: application/json"   -d '{ "email": "user6@example.com", "full_name": "User Three", "password": "password123" }'
 
 curl -i -X POST http://localhost:8080/api/v1/auth/login   -H "Content-Type: application/json"   -d '{ "email": "user3@example.com", "password": "password123" }'
 

@@ -12,6 +12,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        return new CustomOAuth2User(oAuth2User);
+        return new CustomOAuth2User(oAuth2User);  // Chuyển đổi OAuth2User thành CustomOAuth2User
     }
 }
